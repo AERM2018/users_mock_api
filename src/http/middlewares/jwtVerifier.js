@@ -11,6 +11,7 @@ const verifyJwt = async (req, res, next) => {
     const token = authHeader.split(" ")[1];
     const data = await isJwtValid(token);
     console.log({ data });
+    req.user = data;
     next();
   } catch (error) {
     res.status(401).json({

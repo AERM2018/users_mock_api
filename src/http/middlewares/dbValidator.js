@@ -1,31 +1,43 @@
 const db = require("../../db/models");
-const isEmailTaken = async (req, res, next) => {
-  const { email } = req.body;
-  const userWithEmail = await db.user.findOne({
-    where: { email },
-  });
-  if (userWithEmail) {
-    return res.status(400).json({
-      error: "Email is already used.",
+const isEmail =
+  (whatFor = "") =>
+  async (req, res, next) => {
+    const { email } = req.body;
+    const userWithEmail = await db.user.findOne({
+      where: { email },
     });
-  }
-  next();
-};
+    switch (whatFor) {
+      case "checkIfTaken":
+        if (userWithEmail) {
+          return res.status(400).json({
+            error: "Email is already used.",
+          });
+        }
+        break;
+      case "checkIfExists":
+        if (!userWithEmail) {
+          return res.status(400).json({
+            error: `Email was not found.`,
+          });
+        }
+        break;
+    }
+    next();
+  };
 
-const isEmail = async (req, res, next) => {
-  const { email } = req.body;
-  const userWithEmail = await db.user.findOne({
-    where: { email },
-  });
-  if (!userWithEmail) {
-    return res.status(400).json({
-      error: `Email: ${email} was not found.`,
+const isPost = async (req, res, next) => {
+  const { postId } = req.params;
+  const post = await db.post.findByPk(postId);
+  console.log({ post });
+  if (!post) {
+    return res.status(404).json({
+      error: "Post was not found.",
     });
   }
   next();
 };
 
 module.exports = {
-  isEmailTaken,
   isEmail,
+  isPost,
 };
