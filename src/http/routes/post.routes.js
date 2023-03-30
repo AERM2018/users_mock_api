@@ -9,5 +9,5 @@ module.exports = (mainRouter = Router()) => {
   postRouter.post("/", controller.createPost);
   postRouter.post("/:postId/likes", [isPost], controller.addLikeToPost);
   postRouter.get("/", controller.getPosts);
-  mainRouter.use("/posts", [verifyJwt], postRouter);
+  mainRouter.use("/posts", postRouter);
 };
