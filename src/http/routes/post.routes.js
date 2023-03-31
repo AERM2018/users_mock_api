@@ -6,7 +6,7 @@ const { verifyJwt } = require("../middlewares/jwtVerifier");
 module.exports = (mainRouter = Router()) => {
   const postRouter = Router();
   const controller = new PostController();
-  postRouter.post("/", controller.createPost);
+  postRouter.post("/", [verifyJwt], controller.createPost);
   postRouter.post("/:postId/likes", [isPost], controller.addLikeToPost);
   postRouter.get("/", controller.getPosts);
   mainRouter.use("/posts", postRouter);
